@@ -52,66 +52,21 @@
           return $data;
         }
         function mostrar($data) {
-          for ($i = 0; $i < count($data); $i++) {
-            echo '<pre>';
-            echo $i.' ('.$data[$i][0].' | '.$data[$i][1].')<br>'; 
-            echo '</pre>';
+          $i = 0;
+          foreach($data as $alumno){
+            echo '<tr>';
+            echo '<td>'.$i++.'</td>';
+            echo '<td>'.$alumno[0].'</td>';
+            echo '<td>'.$alumno[1].'</td>';
+            echo '</tr>';
           }
-        }
-        function diferenciaFast($data1, $data2) {
-          $exist = [];
-
-          for($i = 0; $i < count($data2); $i++){
-            $idx = (integer)($data2[$i][0]);
-            $exist[$idx] = 1;
-          }
-          /*
-          for ($i = 0, $cont=0; $i < count($data1); $i++){
-            $idx = (integer)($data1[$i][0]);
-            if( array_key_exists($idx, $exist) === FALSE){
-              echo '<pre>';
-              echo $cont++.' ('.$data1[$i][0].'  '.$data1[$i][1].')<br>'; 
-              echo '</pre>';
-            }
-            
-          }
-          */
-          ?>
-
-          <?php
-            for ($i = 0, $cont=0; $i < count($data1); $i++){
-          ?>
-            <?php
-            $idx = (integer)($data1[$i][0]);
-            if( array_key_exists($idx, $exist) === FALSE){
-            ?>
-              <tr>
-                <th><?php  echo ++$cont?></th>
-                <th><?php  echo $data1[$i][0]?></th>                                                
-                <th><?php  echo $data1[$i][1]?></th>
-              </tr>
-            <?php  
-            }
-            ?>  
-          <?php 
-          }
-          ?>
-        <?php  
         }
 
         function alumnos_no_matriculados($alumnos_anterior, $alumnos_actual) {
-          diferenciaFast($alumnos_anterior, $alumnos_actual);
+          return array_udiff($alumnos_anterior, $alumnos_actual, 'cmp_codigo');
         }
         function alumnos_sin_tutor($alumnos_anterior, $alumnos_actual) {
-          diferenciaFast($alumnos_actual, $alumnos_anterior);
-        }
-        function cargar1()
-        {
-          $data1=cargar_doc1();
-        }
-        function cargar2()
-        {
-          $data2=cargar_doc2();
+          return array_udiff($alumnos_actual, $alumnos_anterior, 'cmp_codigo');
         }
 
         function ejecutar1()
@@ -120,20 +75,16 @@
           $data2 = cargar_doc2(); 
           
           usort($data1, "cmp_codigo");
-
-          alumnos_no_matriculados($data1, $data2);
+          mostrar(alumnos_no_matriculados($data1, $data2));
         }
         function ejecutar2()
         {
           $data1 = cargar_doc1();
           $data2 = cargar_doc2();          
           
-          usort($data2, "cmp_codigo");       
-                    
-          alumnos_sin_tutor($data1, $data2);
-        }
-        
-        
+          usort($data2, "cmp_codigo");
+          mostrar(alumnos_sin_tutor($data1, $data2));
+        }        
       ?>
    </body>
 </html>
